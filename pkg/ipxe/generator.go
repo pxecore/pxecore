@@ -9,13 +9,21 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
+	"path"
 	"strings"
 	"text/template"
 )
 
 const (
 	blobFileName string = "blob.go"
-	embedFile  string = "./test.txt"
+	embedFile    string = "./test.txt"
+	// IPXESrcPath points to the IPXE source code base path.
+	IPXESrcPath        string = "./ipxe/src"
+	IPXEBiosBinPath    string = IPXESrcPath + "/src/bin/undionly.kpxe"
+	IPXEEFIBinPath     string = IPXESrcPath + "/src/bin/ipxe.efi"
+	IPXEBiosMakeTarget string = "bin-x86_64-efi/ipxe.efi"
+	IPXEBiosMakeArgs   string = "EMBED=../../boot.ipxe"
 )
 
 // Define vars for build template
@@ -39,7 +47,7 @@ func fmtByteSlice(s []byte) string {
 	return builder.String()
 }
 
-func main() {
+func compileTemplate(ipxeBiosFile string, ipxeUEFIFile string) error {
 	// Walking through embed directory
 	config, err := ioutil.ReadFile(embedFile)
 	if err != nil {
@@ -71,5 +79,32 @@ func main() {
 	// Writing blob file
 	if err = ioutil.WriteFile(blobFileName, data, os.ModePerm); err != nil {
 		log.Fatal("Error writing blob file", err)
+	}
+	return nil
+}
+
+func makeIPXEBinary(ipxeBasePath string) error {
+	cmd := exec.Command("bash", "-c", "make", IPXEBiosMakeTarget, IPXEBiosMakeArgs)
+	cmd.Dir = ipxeBasePath
+	out, err := cmd.Output()
+	if err != nil {
+		log.Print(string(out))
+		return err
+	}
+	return nil
+}
+
+func main() {
+	pwd, err := os.Getwd()
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println(pwd)
+	srcPath := path.Join(pwd, IPXESrcPath)
+	fmt.Println(srcPath)
+
+	err = makeIPXEBinary(srcPath)
+	if err != nil {
+		log.Fatal("Error building IPXE Binaries", err)
 	}
 }

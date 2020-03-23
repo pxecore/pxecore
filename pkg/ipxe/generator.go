@@ -1,4 +1,11 @@
 //+build ignore
+// Compiles IPXE for regular Bios and UEFI and dumps the binary
+// in blob.go file.
+// 
+// Triggered by: main.go
+// Command: go generate ./...
+//
+// Based the godly article: https://github.com/koddr/example-embed-static-files-go
 
 package main
 
@@ -16,20 +23,25 @@ import (
 )
 
 const (
-	blobFileName string = "blob.go"
-	embedFile    string = "./test.txt"
+	// BlobFileName where the files will be dumped.
+	BlobFileName string = "blob.go"
 	// IPXESrcPath points to the IPXE source code base path.
 	IPXESrcPath        string = "./ipxe/src"
-	IPXEBiosMakeTarget string = "bin-x86_64-efi/ipxe.efi"
+	// IPXEBios target information.
+	IPXEBiosMakeTarget string = "bin/undionly.kpxe"
 	IPXEBiosMakeArgs   string = "EMBED=../../boot.ipxe"
+	// IPXEEFI target information.
+	IPXEEFIMakeTarget string = "bin-x86_64-efi/ipxe.efi"
+	IPXEEFIMakeArgs   string = "EMBED=../../boot.ipxe"
 )
 
+// templateVars stores the binary information for the Embbeded IPXEFiles
 type templateVars struct {
 	IPXEBiosBin []byte
 	IPXEEFIBin  []byte
 }
 
-// Define vars for build template
+// Template static definition.
 var conv = map[string]interface{}{"conv": fmtByteSlice}
 var tmpl = template.Must(template.New("").Funcs(conv).Parse(`package ipxe
 
@@ -41,6 +53,37 @@ func init() {
 }`),
 )
 
+// main complies the IPXE files and generates the blob.go file.
+func main() {
+
+	pwd, err := os.Getwd()
+	if err != nil {
+		log.Fatal("Error geting the base path", err)
+	}
+
+	log.Println("Base Generator Dir: ", pwd)
+	srcPath := path.Join(pwd, IPXESrcPath)
+	log.Println("Base IPXE Source Dir: ", srcPath)
+
+	vars := new(templateVars)
+	file, err := makeIPXEBinary(srcPath, IPXEBiosMakeTarget, IPXEBiosMakeArgs)
+	if err != nil {
+		log.Fatal("Error building IPXE Bios Binaries", err)
+	}
+	vars.IPXEBiosBin = file
+
+	file, err = makeIPXEBinary(srcPath, IPXEEFIMakeTarget, IPXEEFIMakeArgs)
+	if err != nil {
+		log.Fatal("Error building IPXE EFI Binaries", err)
+	}
+	vars.IPXEEFIBin = file
+
+	if err = writeBlobFile(vars); err != nil {
+		log.Fatal("Error Building Blob File", err)
+	}
+}
+
+// fmtByteSlice formats a byte array to string in order to be added into the template.
 func fmtByteSlice(s []byte) string {
 	builder := strings.Builder{}
 
@@ -51,67 +94,32 @@ func fmtByteSlice(s []byte) string {
 	return builder.String()
 }
 
-func compileTemplate(ipxeBiosFile string, ipxeUEFIFile string) error {
-	// Walking through embed directory
-	config, err := ioutil.ReadFile(embedFile)
-	if err != nil {
-		// If file not reading
-		log.Fatalf("Error reading %s: %s", embedFile, err)
-	}
-
-	// Create blob file
-	f, err := os.Create(blobFileName)
-	if err != nil {
-		log.Fatal("Error creating blob file:", err)
-	}
-	defer f.Close()
-
-	// Create buffer
-	builder := &bytes.Buffer{}
-
-	// Execute template
-	if err = tmpl.Execute(builder, config); err != nil {
-		log.Fatal("Error executing template", err)
-	}
-
-	// Formatting generated code
-	data, err := format.Source(builder.Bytes())
-	if err != nil {
-		log.Fatal("Error formatting generated code", err)
-	}
-
-	// Writing blob file
-	if err = ioutil.WriteFile(blobFileName, data, os.ModePerm); err != nil {
-		log.Fatal("Error writing blob file", err)
-	}
-	return nil
-}
-
-func MakeIPXEBinary(ipxeBasePath string, makeTarget string, makeArgs string) (string, error) {
+// makeIPXEBinary builds IPXE in a particular target with a set of arguments.
+func makeIPXEBinary(ipxeBasePath string, makeTarget string, makeArgs string) ([]byte, error) {
 	cmd := exec.Command("make", makeTarget, makeArgs)
-	log.Print(cmd.String())
+	log.Print("Running Command: ", cmd.String())
 	cmd.Dir = ipxeBasePath
 	out, err := cmd.Output()
 	if err != nil {
 		log.Print(string(out))
-		return "", err
+		return make([]byte,0), err
 	}
-	return path.Join(ipxeBasePath, IPXESrcPath), nil
+	
+	return ioutil.ReadFile(path.Join(ipxeBasePath, makeTarget))
 }
 
-func main() {
-	pwd, err := os.Getwd()
-	if err != nil {
-		log.Println(err)
+// writeBlobFile compiles the template and saves it as a file.
+func writeBlobFile(vars *templateVars) error{
+	builder := &bytes.Buffer{}
+	if err := tmpl.Execute(builder, vars); err != nil {
+		return err
 	}
-	log.Println("Base Generator Dir: ", pwd)
-
-	srcPath := path.Join(pwd, IPXESrcPath)
-	log.Println("Base IPXE Source Dir: ", srcPath)
-
-	filePath, err := MakeIPXEBinary(srcPath, IPXEBiosMakeTarget, IPXEBiosMakeArgs)
+	data, err := format.Source(builder.Bytes())
 	if err != nil {
-		log.Fatal("Error building IPXE Binaries", err)
+		return err
 	}
-	log.Println("Compiled file path: ", filePath)
+	if err = ioutil.WriteFile(blobFileName, data, os.ModePerm); err != nil {
+		return err
+	}
+	return nil
 }

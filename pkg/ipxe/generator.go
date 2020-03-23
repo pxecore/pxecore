@@ -35,7 +35,7 @@ const (
 	IPXEEFIMakeArgs   string = "EMBED=../../boot.ipxe"
 )
 
-// templateVars stores the binary information for the Embbeded IPXEFiles
+// templateVars stores the binary information for the embedded IPXEFiles
 type templateVars struct {
 	IPXEBiosBin []byte
 	IPXEEFIBin  []byte
@@ -118,7 +118,7 @@ func writeBlobFile(vars *templateVars) error{
 	if err != nil {
 		return err
 	}
-	if err = ioutil.WriteFile(blobFileName, data, os.ModePerm); err != nil {
+	if err = ioutil.WriteFile(BlobFileName, data, os.ModePerm); err != nil {
 		return err
 	}
 	return nil

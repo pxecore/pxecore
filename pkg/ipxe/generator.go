@@ -84,7 +84,8 @@ func compileTemplate(ipxeBiosFile string, ipxeUEFIFile string) error {
 }
 
 func makeIPXEBinary(ipxeBasePath string) error {
-	cmd := exec.Command("bash", "-c", "make", IPXEBiosMakeTarget, IPXEBiosMakeArgs)
+	cmd := exec.Command("make", IPXEBiosMakeTarget, IPXEBiosMakeArgs)
+	log.Print(cmd.String())
 	cmd.Dir = ipxeBasePath
 	out, err := cmd.Output()
 	if err != nil {

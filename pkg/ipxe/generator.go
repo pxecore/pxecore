@@ -23,16 +23,19 @@ import (
 )
 
 const (
+	// InitScriptPath where the init script is.
+	InitScriptFilename string = "init.sh"
+	ScriptDir string = "./script"
 	// BlobFileName where the files will be dumped.
 	BlobFileName string = "blob.go"
 	// IPXESrcPath points to the IPXE source code base path.
 	IPXESrcPath        string = "./ipxe/src"
 	// IPXEBios target information.
 	IPXEBiosMakeTarget string = "bin/undionly.kpxe"
-	IPXEBiosMakeArgs   string = "EMBED=../../boot.ipxe"
+	IPXEBiosMakeArgs   string = "EMBED=../../script/boot.ipxe"
 	// IPXEEFI target information.
 	IPXEEFIMakeTarget string = "bin-x86_64-efi/ipxe.efi"
-	IPXEEFIMakeArgs   string = "EMBED=../../boot.ipxe"
+	IPXEEFIMakeArgs   string = "EMBED=../../script/boot.ipxe"
 )
 
 // templateVars stores the binary information for the embedded IPXEFiles
@@ -52,6 +55,22 @@ func init() {
 	ipxeUEFIFile = []byte{ {{ conv .IPXEEFIBin }} }
 }`),
 )
+
+// init cleans the IPXE source.
+func init() {
+	pwd, err := os.Getwd()
+	if err != nil {
+		log.Fatal("Error geting the base path", err)
+	}
+
+	cmd := exec.Command("sh", InitScriptFilename)
+	cmd.Dir = path.Join(pwd, ScriptDir)
+	log.Print("Running Command: ", cmd.String())
+	out, err := cmd.Output()
+	if err != nil {
+		log.Fatal("Error in init(): ",string(out))
+	}
+}
 
 // main complies the IPXE files and generates the blob.go file.
 func main() {

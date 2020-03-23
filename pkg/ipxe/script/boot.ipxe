@@ -1,4 +1,3 @@
 #!ipxe
 
-dhcp
-chain boot/${net0/mac:hexhyp}.ipxe
+chain mac-${net0/mac:hexhyp}.ipxe

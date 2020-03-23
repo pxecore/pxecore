@@ -1,3 +1,4 @@
 #!ipxe
 
-chain mac-${net0/mac:hexhyp}.ipxe
+dhcp
+chain tftp://${next-server}/mac-${net0/mac:hexhyp}.ipxe

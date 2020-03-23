@@ -10,6 +10,12 @@ import (
 	"time"
 )
 
+const (
+	IPXEBiosFilename string = "undionly.kpxe"
+	IPXEEFIFilename string = "ipxe.efi"
+)
+
+
 type ServerConfig struct {
 	// Address tftp server will listen to. Example: ":69"
 	Address string
@@ -46,7 +52,17 @@ func (s *Server) Shutdown() error {
 }
 
 func (s *Server) tftpReadHandler(filename string, rf io.ReaderFrom) error {
-	_, _ = rf.ReadFrom(bytes.NewReader(ipxe.GetIPXEBiosFile()))
 	log.Info(filename)
+	switch filename {
+	case IPXEBiosFilename:
+		_, _ = rf.ReadFrom(bytes.NewReader(ipxe.GetIPXEBiosFile()))
+		break
+	case IPXEEFIFilename:
+		_, _ = rf.ReadFrom(bytes.NewReader(ipxe.GetIPXEUEFIFile()))
+		break
+	default:
+		i := "#!ipxe\n\ndhcp\nchain --autofree https://boot.netboot.xyz"
+		_, _ = rf.ReadFrom(bytes.NewReader([]byte(i)))
+	}
 	return nil
 }

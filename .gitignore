@@ -1,6 +1,14 @@
+## Custom Ignores ##
+
+# Compiled binary resources
 bin/*
 !bin/README.md
+
+# go sum for dependencies
 go.sum
+
+# IPXE Folder which is clone each time a new blob is generated.
+pkg/ipxe/ipxe
 
 # Created by https://www.gitignore.io/api/go,git,macos,windows,intellij+all
 # Edit at https://www.gitignore.io/?templates=go,git,macos,windows,intellij+all

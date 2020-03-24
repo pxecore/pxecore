@@ -19,4 +19,4 @@ coverage: ## Generate global code coverage report
 all_tests: dep lint test coverage ## All Tests
 
 build: dep ## Build the binary file
-	@go build -o ./bin/server ./cmd/main.go
+	@go build -o ./build/pxecored ./cmd/server/main.go

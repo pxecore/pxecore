@@ -12,3 +12,21 @@ notifications:
 
 script:
   - make all_tests
+
+before_deploy:
+  - make build
+
+deploy:
+  - on:
+      all_branches: true
+    provider: releases
+    api_key: "$GITHUB_OAUTH_TOKEN"
+    file_glob: true
+    file: build/*
+    skip_cleanup: true
+
+
+branches:
+  except:
+    - legacy
+    - experimental

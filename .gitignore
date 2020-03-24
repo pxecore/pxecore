@@ -1,8 +1,7 @@
 ## Custom Ignores ##
 
 # Compiled binary resources
-bin/*
-!bin/README.md
+build/*
 
 # go sum for dependencies
 go.sum

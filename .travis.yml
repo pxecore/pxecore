@@ -10,5 +10,27 @@ git:
 notifications:
   email: false
 
+install:
+  - # skip
+
 script:
   - make all_tests
+
+before_deploy:
+  - make build
+
+deploy:
+    - provider: releases
+      api_key: "$GITHUB_TOKEN"
+      file_glob: true
+      file: build/*
+      skip_cleanup: true
+      on:
+        tags: true
+        condition: $LATEST = true
+
+
+branches:
+  except:
+    - legacy
+    - experimental

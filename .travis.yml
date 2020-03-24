@@ -9,6 +9,11 @@ git:
 
 notifications:
   email: false
+  pushover:
+    api_key: "$PUSHOVER_TOKEN"
+    users:
+      - "$PUSHOVER_MPLIEGO_TOKEN"
+    template: "%{repository_slug} (%{commit}) : %{message} - Build details: %{build_url}"
 
 script:
   - make all_tests

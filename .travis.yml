@@ -12,7 +12,7 @@ notifications:
 
 install:
   - # skip
-    
+
 script:
   - make all_tests
 
@@ -21,7 +21,7 @@ before_deploy:
 
 deploy:
     - provider: releases
-      api_key: "$GITHUB_OAUTH_TOKEN"
+      api_key: "$GITHUB_TOKEN"
       file_glob: true
       file: build/*
       skip_cleanup: true

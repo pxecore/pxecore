@@ -23,6 +23,7 @@ const (
 	IPXEEFIFilename string = "ipxe.efi"
 )
 
+// ServerConfig holds the information that will be used to configure the TFTP Server.
 type ServerConfig struct {
 	// Address tftp server will listen to. Example: ":69".
 	Address string

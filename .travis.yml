@@ -1,38 +1,33 @@
+os: linux
 dist: bionic
 language: go
-
 go:
-  - 1.14.1
-
+- 1.14.1
 git:
   depth: 1
-
 notifications:
   email: false
   pushover:
-    api_key: "$PUSHOVER_TOKEN"
+    api_key:
+      secure: VX/SkqYWUKjl2VWUgsYllypwKuI96cy2Hi6Wnpp5JuLvBNRt1VekXGGczMOBF4f4FLxWQPxyYwAjZqG9JGdeXO+GESx7BzDIftcdV/VpUaVjb+GcThIn+ODrvSyFzCH4+43HPc+rswDWjqaz5EXpeZmJZ2o934116WwBHhYzKGcaBFm00Luqxzt5R45g7x4xggAh20JVBU6ZAK8DswbrG9WExRLWltWQOXY/NkRxx2Zg7zkSTaR9XKK1G7qx3EsQbRMFvBvKpuuM4cy4CETTNsGmyQtJmm56TWswIBWwOS1uMc1lqbCirwTC3TV6OiZ/b+kq8gowgLPKPbFLCkFvqv2KPHTcDQKFLVxOnkuGjxE+zGSP4jEn8of4pghn/n/b7KGX/WxHKpYn5c3sE1gVDj2maThG1/Ob4hVAHgQrEsPgalERZaVaANnNfE6lm8zC23jV9eL3KvKhx+Dh3abw1Dajl5YYUdYJtWrm97Pifby/oMFqvbMrIPI2PV7kNq6CY7gOSYIdNwqI+GfO1yWbpMKTOkZ1ublzIKPeeL8TTFxKQ4KXpSQ86LoIVszv/0TJkGrI1pWyLgYRRtz3c5eG9gAmp824WsWWOSb9O9uD9Jl5AEFH0T8MwuocnYmdVacyhfBEb3L+yIMq6hXni++mGbbNSJQi4khVZjKoRxo03a8=
     users:
-      - "$PUSHOVER_MPLIEGO_TOKEN"
+    - secure: LRksWLgJUFyVTW8c048dBVYDclpi4TdgdCblI5NsTPiki/zzRX5+c2MBJMh+gFpK3qsLXUGjSIgt2KJxLihk/GzSvj4gTDnsABzD8NRn3YRwnOQhoEegEXZ8wBJlldk8kQlXuqL+P7NaVLd1b5Q1JAANY/83h7zTHTtoziKLP01+sFjDbWAYf+qE9AQBedm2IxKa3zQWaKJ8Pbrg5MxKP8GnhJKE0d7t/3otLhguDIB6ygTTYNyCSwxsixot2b88p0OfYGNpiONFou5PGV1baOXFSQO0iQSwQ1CePKjBa7JfsxbPZPCTjBGllWwZdOdUmnDf3Vp3Y2Pa965bip6DnoZ+DPmeybflK+IIM9Fm9vH4ArQAqHGpo42C7Xy+z+FbQkctXjsHCUOrVL8qL8ghYt23RvluqS7HrYCYAVacKqvLENxN2kMYxo6Z6tlv8Ch7oIVIhVnpCz8sZvMEzyApqLUvM6vw65IetFWcTo1EsA0xkpz2zRP4Oc6ZMxBd0mea2ELLpAhhOVeVYJW6wUzlxxUhyVqKj52eK/cqY//t88e9D4w0b//IhgzkvoVMLMLJHyYW+2rgDBAC2ajUZxleTxSjpIAMmSYKuNnSBHgncSiwHuCfRjp7sB02UH24frzWLIsfnbAMzhX17co/Tyq/thnDC9crRTWSxfIloRfrX4E=
     template: "%{repository_slug} (%{commit}) : %{message} - Build details: %{build_url}"
     on_success: always
     on_failure: always
-
 script:
-  - make all_tests
-
+- make all_tests
 before_deploy:
-  - make build
-
+- make build
 deploy:
-    - provider: releases
-      api_key: "$GITHUB_TOKEN"
-      file_glob: true
-      file: build/*
-      cleanup: false
-      on:
-        tags: true
-
+- provider: releases
+  token: "$GITHUB_TOKEN"
+  file_glob: true
+  file: build/*
+  cleanup: false
+  on:
+    tags: true
 branches:
   except:
-    - legacy
-    - experimental
+  - legacy
+  - experimental

@@ -10,9 +10,6 @@ git:
 notifications:
   email: false
 
-install:
-  - # skip
-
 script:
   - make all_tests
 
@@ -27,8 +24,6 @@ deploy:
       skip_cleanup: true
       on:
         tags: true
-        condition: $LATEST = true
-
 
 branches:
   except:

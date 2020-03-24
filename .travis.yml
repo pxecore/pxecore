@@ -10,6 +10,9 @@ git:
 notifications:
   email: false
 
+install:
+  - # skip
+    
 script:
   - make all_tests
 
@@ -17,13 +20,13 @@ before_deploy:
   - make build
 
 deploy:
-  - on:
-      all_branches: true
-    provider: releases
-    api_key: "$GITHUB_OAUTH_TOKEN"
-    file_glob: true
-    file: build/*
-    skip_cleanup: true
+    - provider: releases
+      api_key: "$GITHUB_OAUTH_TOKEN"
+      file_glob: true
+      file: build/*
+      skip_cleanup: true
+      on:
+        all_branches: true
 
 
 branches:

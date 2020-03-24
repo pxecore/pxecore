@@ -19,4 +19,6 @@ coverage: ## Generate global code coverage report
 all_tests: dep lint test coverage ## All Tests
 
 build: dep ## Build the binary file
-	@go build -o ./build/pxecored ./cmd/server/main.go
+	GOOS=darwin GOARCH=amd64 go build -o ./build/pxecore.server.darwin.amd64 ./cmd/server/main.go
+	GOOS=linux GOARCH=arm64 go build -o ./build/pxecore.server.linux.amd64 ./cmd/server/main.go
+	GOOS=linux GOARCH=arm go build -o ./build/pxecore.server.linux.arm ./cmd/server/main.go

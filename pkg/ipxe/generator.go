@@ -23,19 +23,19 @@ import (
 )
 
 const (
-	// InitScriptPath where the init script is.
+	// InitScriptPath where the init static is.
 	InitScriptFilename string = "init.sh"
-	ScriptDir string = "./script"
+	ScriptDir string = "./static"
 	// BlobFileName where the files will be dumped.
 	BlobFileName string = "blob.go"
 	// IPXESrcPath points to the IPXE source code base path.
 	IPXESrcPath        string = "./ipxe/src"
 	// IPXEBios target information.
 	IPXEBiosMakeTarget string = "bin/undionly.kpxe"
-	IPXEBiosMakeArgs   string = "EMBED=../../script/boot.ipxe"
+	IPXEBiosMakeArgs   string = "EMBED=../../static/boot.ipxe"
 	// IPXEEFI target information.
 	IPXEEFIMakeTarget string = "bin-x86_64-efi/ipxe.efi"
-	IPXEEFIMakeArgs   string = "EMBED=../../script/boot.ipxe"
+	IPXEEFIMakeArgs   string = "EMBED=../../static/boot.ipxe"
 )
 
 // templateVars stores the binary information for the embedded IPXEFiles

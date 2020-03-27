@@ -1,0 +1,4 @@
+#!ipxe
+
+echo Single mode file.
+sleep 10

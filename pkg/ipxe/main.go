@@ -17,7 +17,7 @@ func SetIPXEBiosFile(file []byte) {
 	ipxeBiosFile = file
 }
 
-// LoadIPXEUEFIFile reads the provided path and load it's binary content.
+// LoadIPXEBiosFile reads the provided path and load it's binary content.
 func LoadIPXEBiosFile(path string) error {
 	read, err := ioutil.ReadFile(path)
 	if err != nil{

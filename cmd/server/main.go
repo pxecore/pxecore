@@ -2,12 +2,14 @@ package main
 
 import (
 	"errors"
+	"github.com/pxecore/pxecore/pkg/ipxe"
 	"github.com/pxecore/pxecore/pkg/ipxe/script"
 	"github.com/pxecore/pxecore/pkg/tftp"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -17,6 +19,8 @@ type coreConfig struct {
 	logFile        string
 	singleMode     bool
 	singleModeFile string
+	ipxeBiosFile   string
+	ipxeUEFIFile   string
 }
 
 var config = new(coreConfig)
@@ -28,27 +32,39 @@ func main() {
 	loadLogging(config)
 	loadConfigFile(config)
 	log.WithField("config", viper.AllSettings()).Debug("Config Loaded.")
-	var ipxe tftp.IPXEScript
+
+	if config.ipxeBiosFile != "" {
+		if err := ipxe.LoadIPXEBiosFile(config.ipxeBiosFile); err != nil {
+			log.WithError(err).Fatal("Error loading ipxe-bios file.")
+		}
+	}
+	if config.ipxeUEFIFile != "" {
+		if err := ipxe.LoadIPXEUEFIFile(config.ipxeUEFIFile); err != nil {
+			log.WithError(err).Fatal("Error loading ipxe-uefi file.")
+		}
+	}
+
+	var ipxeScript tftp.IPXEScript
 	if config.singleMode {
 		i, err := script.NewSingleIPXEScriptFromFile(config.singleModeFile)
 		if err != nil {
 			log.WithError(err).Fatal("Error loading single file.")
 		}
-		ipxe = i
+		ipxeScript = i
 	}
 	tftpServer = new(tftp.Server)
 	tftpServer.Start(tftp.ServerConfig{
 		Address:    ":69",
 		Timeout:    5 * time.Second,
-		IPXEScript: &ipxe,
+		IPXEScript: &ipxeScript,
 	})
 }
 
 // loadCoreConfig defines the flags and environment used by the server.
 func loadCoreConfig(c *coreConfig) {
 	viper.SetEnvPrefix("pxecore")
+	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	pflag.ErrHelp = errors.New("pxecore-server: help requested")
-
 	pflag.StringP("config", "c", "", "Config file path.")
 	viper.BindEnv("config")
 	pflag.Bool("debug", false, "Verbose Output.")
@@ -57,6 +73,10 @@ func loadCoreConfig(c *coreConfig) {
 	viper.BindEnv("logfile")
 	pflag.StringP("single", "s", "", "Single Mode File Path.")
 	viper.BindEnv("single")
+	pflag.String("ipxe-bios", "", "Single Mode File Path.")
+	viper.BindEnv("ipxe-bios")
+	pflag.String("ipxe-uefi", "", "Single Mode File Path.")
+	viper.BindEnv("ipxe-uefi")
 	pflag.Parse()
 	if err := viper.BindPFlags(pflag.CommandLine); err != nil {
 		log.Warn("Error reading flags: ", err)
@@ -67,6 +87,8 @@ func loadCoreConfig(c *coreConfig) {
 	c.logFile = viper.GetString("logfile")
 	c.singleMode = viper.GetString("single") != ""
 	c.singleModeFile = viper.GetString("single")
+	c.ipxeBiosFile = viper.GetString("ipxe-bios")
+	c.ipxeUEFIFile = viper.GetString("ipxe-uefi")
 }
 
 // loadLogging reads from flags and env variables the logging level and file.

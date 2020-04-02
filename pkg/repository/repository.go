@@ -3,7 +3,6 @@ package repository
 import (
 	"errors"
 	"github.com/pxecore/pxecore/pkg/entity"
-	"github.com/pxecore/pxecore/pkg/repository/memory"
 	"strings"
 )
 
@@ -29,7 +28,7 @@ func NewRepository(config map[string]interface{}) (*Repository, error) {
 		if driver, ok := val.(string); ok {
 			switch strings.ToLower(driver) {
 			case "memory":
-				return memory.NewRepository(config)
+				return newMemoryRepository(config)
 			}
 		}
 		return nil, errors.New("invalid type in repository type")

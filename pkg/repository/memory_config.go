@@ -1,4 +1,4 @@
-package memory
+package repository
 
 import "github.com/pxecore/pxecore/pkg/errors"
 
@@ -8,7 +8,7 @@ type Config struct {
 }
 
 // NewConfig creates a new Config extracting and checking type of the required fields.
-func NewConfig(r *Repository, config map[string]interface{}) (*Config, error) {
+func NewConfig(r *memoryRepository, config map[string]interface{}) (*Config, error) {
 	c := new(Config)
 
 	c.allowReset = false

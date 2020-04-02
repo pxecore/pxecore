@@ -1,15 +1,14 @@
-package memory
+package repository
 
 import (
 	"fmt"
 	"github.com/pxecore/pxecore/pkg/entity"
 	"github.com/pxecore/pxecore/pkg/errors"
-	"github.com/pxecore/pxecore/pkg/repository"
 	"sync"
 )
 
 // HostRepository defines the CRUD procedure for entity.Host
-type HostRepository struct {
+type memoryHostRepository struct {
 	lock              *sync.RWMutex
 	repository        *Repository
 	config            *Config
@@ -18,9 +17,9 @@ type HostRepository struct {
 }
 
 // NewHostRepository instantiates a new repository for entity.Host
-func NewHostRepository(r *Repository, config *Config) (*repository.HostRepository, error) {
-	var hr repository.HostRepository
-	hr = &HostRepository{
+func newMemoryHostRepository(r *Repository, config *Config) (*HostRepository, error) {
+	var hr HostRepository
+	hr = &memoryHostRepository{
 		new(sync.RWMutex),
 		r,
 		config,
@@ -31,7 +30,7 @@ func NewHostRepository(r *Repository, config *Config) (*repository.HostRepositor
 }
 
 // Create add a new entity.Host to the repository
-func (h *HostRepository) Create(host entity.Host) error {
+func (h *memoryHostRepository) Create(host entity.Host) error {
 	h.lock.Lock()
 	defer h.lock.Unlock()
 	e := host
@@ -57,7 +56,7 @@ func (h *HostRepository) Create(host entity.Host) error {
 }
 
 // Get implements repository.HostRepository interface
-func (h *HostRepository) Get(ID string) (entity.Host, error) {
+func (h *memoryHostRepository) Get(ID string) (entity.Host, error) {
 	h.lock.RLock()
 	defer h.lock.RUnlock()
 	if val, ok := h.hosts[ID]; ok {
@@ -68,7 +67,7 @@ func (h *HostRepository) Get(ID string) (entity.Host, error) {
 }
 
 // FindByHardwareAddr implements repository.HostRepository interface
-func (h *HostRepository) FindByHardwareAddr(hardwareAddr string) (entity.Host, error) {
+func (h *memoryHostRepository) FindByHardwareAddr(hardwareAddr string) (entity.Host, error) {
 	h.lock.RLock()
 	defer h.lock.RUnlock()
 	if val, ok := h.hardwareAddrIndex[hardwareAddr]; ok {
@@ -79,7 +78,7 @@ func (h *HostRepository) FindByHardwareAddr(hardwareAddr string) (entity.Host, e
 }
 
 // Update implements repository.HostRepository interface
-func (h *HostRepository) Update(host entity.Host) error {
+func (h *memoryHostRepository) Update(host entity.Host) error {
 	h.lock.Lock()
 	defer h.lock.Unlock()
 	e := host
@@ -111,7 +110,7 @@ func (h *HostRepository) Update(host entity.Host) error {
 }
 
 // Delete implements repository.HostRepository interface
-func (h *HostRepository) Delete(host entity.Host) error {
+func (h *memoryHostRepository) Delete(host entity.Host) error {
 	h.lock.Lock()
 	defer h.lock.Unlock()
 	e := host

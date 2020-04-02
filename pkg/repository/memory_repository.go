@@ -9,12 +9,11 @@ type memoryRepository struct {
 func newMemoryRepository(config map[string]interface{}) (*Repository, error) {
 	r := new(memoryRepository)
 	var ri Repository = r
-
+	
 	c, err := NewConfig(r, config)
 	if err != nil {
 		return nil, err
 	}
-
 	hr, err := newMemoryHostRepository(&ri, c)
 	if err != nil {
 		return nil, err

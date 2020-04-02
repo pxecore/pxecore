@@ -1,8 +1,3 @@
-var1: a
-map1:
-  a: true
-  b: b
-array:
-  - a
-  - b
-  - c
+tftp:
+  address: :69 # GOLANG ListenAndServe Address
+  timeout: 2s  # GOLANG Duration

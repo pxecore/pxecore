@@ -13,55 +13,36 @@ import (
 	"time"
 )
 
-type coreConfig struct {
-	configFile     string
-	debug          bool
-	logFile        string
-	singleMode     bool
-	singleModeFile string
-	ipxeBiosFile   string
-	ipxeUEFIFile   string
-}
-
-var config = new(coreConfig)
 var tftpServer = new(tftp.Server)
 
 func main() {
 	log.Info("Starting PXECORE Server...")
-	loadCoreConfig(config)
-	loadLogging(config)
-	loadConfigFile(config)
+
+	loadDefaultConfig()
+	loadCoreConfig()
+	loadLogging()
+	loadConfigFile()
 	log.WithField("config", viper.AllSettings()).Debug("Config Loaded.")
 
-	if config.ipxeBiosFile != "" {
-		if err := ipxe.LoadIPXEBiosFile(config.ipxeBiosFile); err != nil {
-			log.WithError(err).Fatal("Error loading ipxe-bios file.")
-		}
-	}
-	if config.ipxeUEFIFile != "" {
-		if err := ipxe.LoadIPXEUEFIFile(config.ipxeUEFIFile); err != nil {
-			log.WithError(err).Fatal("Error loading ipxe-uefi file.")
-		}
+	if err := overrideIPXEFiles(); err != nil {
+		log.WithError(err).Fatal("Error loading ipxe file.")
 	}
 
-	var ipxeScript tftp.IPXEScript
-	if config.singleMode {
-		i, err := script.NewSingleIPXEScriptFromFile(config.singleModeFile)
-		if err != nil {
-			log.WithError(err).Fatal("Error loading single file.")
-		}
-		ipxeScript = i
+	if err := loadTFTPServer(); err != nil {
+		log.WithError(err).Fatal("Error loading tftp server.")
 	}
-	tftpServer = new(tftp.Server)
-	tftpServer.Start(tftp.ServerConfig{
-		Address:    ":69",
-		Timeout:    5 * time.Second,
-		IPXEScript: &ipxeScript,
+}
+
+// loadDefaultConfig loads default config.
+func loadDefaultConfig() {
+	viper.SetDefault("tftp", map[string]interface{}{
+		"address": ":69",
+		"timeout": 5 * time.Second,
 	})
 }
 
 // loadCoreConfig defines the flags and environment used by the server.
-func loadCoreConfig(c *coreConfig) {
+func loadCoreConfig() {
 	viper.SetEnvPrefix("pxecore")
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	pflag.ErrHelp = errors.New("pxecore-server: help requested")
@@ -81,31 +62,23 @@ func loadCoreConfig(c *coreConfig) {
 	if err := viper.BindPFlags(pflag.CommandLine); err != nil {
 		log.Warn("Error reading flags: ", err)
 	}
-
-	c.configFile = viper.GetString("config")
-	c.debug = viper.GetBool("debug")
-	c.logFile = viper.GetString("logfile")
-	c.singleMode = viper.GetString("single") != ""
-	c.singleModeFile = viper.GetString("single")
-	c.ipxeBiosFile = viper.GetString("ipxe-bios")
-	c.ipxeUEFIFile = viper.GetString("ipxe-uefi")
 }
 
 // loadLogging reads from flags and env variables the logging level and file.
-func loadLogging(config *coreConfig) {
-	if config.debug {
+func loadLogging() {
+	if viper.GetBool("debug") {
 		log.SetLevel(log.DebugLevel)
 	} else {
 		log.SetLevel(log.InfoLevel)
 	}
 
-	if config.logFile != "" {
-		file, err := os.OpenFile(config.logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if lf := viper.GetString("logfile"); lf != "" {
+		file, err := os.OpenFile(lf, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 		if err == nil {
 			log.SetOutput(file)
-			log.WithField("logfile", config.logFile).Debug("Logging into File")
+			log.WithField("logfile", lf).Debug("Logging into File")
 		} else {
-			log.WithField("logfile", config.logFile).Warn("Failed to open logfile, using stdout")
+			log.WithField("logfile", lf).Warn("Failed to open logfile, using stdout")
 		}
 	} else {
 		log.Debug("Logging into STDERR")
@@ -113,9 +86,9 @@ func loadLogging(config *coreConfig) {
 }
 
 // loadConfigFile load de config files relative to the current path or on the config flag.
-func loadConfigFile(config *coreConfig) {
-	if config.configFile != "" {
-		viper.SetConfigFile(config.configFile)
+func loadConfigFile() {
+	if cf := viper.GetString("config"); cf != "" {
+		viper.SetConfigFile(cf)
 	} else {
 		viper.SetConfigName("config")
 		viper.SetConfigType("yaml")
@@ -127,4 +100,43 @@ func loadConfigFile(config *coreConfig) {
 			log.Fatal("Error loading viper config", err)
 		}
 	}
+}
+
+// overrideIPXEFiles replaces the memory loaded IPXE File with the one provided.
+func overrideIPXEFiles() error {
+	if path := viper.GetString("ipxe-bios"); path != "" {
+		if err := ipxe.LoadIPXEBiosFile(path); err != nil {
+			return err
+		}
+	}
+	if path := viper.GetString("ipxe-uefi"); path != "" {
+		if err := ipxe.LoadIPXEUEFIFile(path); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// loadTFTPServer starts the TFTP Server.
+func loadTFTPServer() error {
+	tftpServer = new(tftp.Server)
+	return tftpServer.Start(tftp.ServerConfig{
+		Address:    viper.GetString("tftp.address"),
+		Timeout:    viper.GetDuration("tftp.timeout"),
+		IPXEScript: loadIPXEScript(),
+	})
+}
+
+// loadIPXEScript checks the configuration and load the wanted IPXE resolver.
+func loadIPXEScript() *tftp.IPXEScript {
+	var i tftp.IPXEScript
+	var err error
+	if smf := viper.GetString("single"); smf != "" {
+		i, err = script.NewSingleIPXEScriptFromFile(smf)
+		if err != nil {
+			log.WithError(err).Fatal("Error loading single file.")
+		}
+		return &i
+	}
+	return nil
 }

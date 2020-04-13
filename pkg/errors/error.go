@@ -18,6 +18,8 @@ const (
 	ERepositoryKeyNotFound string = "ERepositoryKeyDontExist"
 	// ERepositoryEmptyKey code when a key should have been provided.
 	ERepositoryEmptyKey string = "ERepositoryEmptyKey"
+	// ERepositoryReadOnly read only mode activated.
+	ERepositoryReadOnly string = "ERepositoryReadOnly"
 )
 
 // Error data structure

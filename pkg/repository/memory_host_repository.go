@@ -4,35 +4,37 @@ import (
 	"fmt"
 	"github.com/pxecore/pxecore/pkg/entity"
 	"github.com/pxecore/pxecore/pkg/errors"
-	"sync"
 )
 
 // HostRepository defines the CRUD procedure for entity.Host
 type memoryHostRepository struct {
-	lock              *sync.RWMutex
-	repository        *Repository
-	config            *Config
+	session           Session
+	config            MemoryConfig
 	hosts             map[string]*entity.Host
 	hardwareAddrIndex map[string]*entity.Host
 }
 
 // NewHostRepository instantiates a new repository for entity.Host
-func newMemoryHostRepository(r *Repository, config *Config) (*HostRepository, error) {
+func newMemoryHostRepository(
+	s Session,
+	config MemoryConfig,
+	hosts map[string]*entity.Host,
+	hardwareAddrIndex map[string]*entity.Host) *HostRepository {
 	var hr HostRepository
 	hr = &memoryHostRepository{
-		new(sync.RWMutex),
-		r,
+		s,
 		config,
-		make(map[string]*entity.Host),
-		make(map[string]*entity.Host),
+		hosts,
+		hardwareAddrIndex,
 	}
-	return &hr, nil
+	return &hr
 }
 
 // Create add a new entity.Host to the repository
 func (h *memoryHostRepository) Create(host entity.Host) error {
-	h.lock.Lock()
-	defer h.lock.Unlock()
+	if h.session.IsReadOnly() {
+		return &errors.Error{Code: errors.ERepositoryReadOnly, Msg: "read-only mode"}
+	}
 	e := host
 	if e.ID == "" {
 		return &errors.Error{Code: errors.ERepositoryEmptyKey,
@@ -57,8 +59,6 @@ func (h *memoryHostRepository) Create(host entity.Host) error {
 
 // Get implements repository.HostRepository interface
 func (h *memoryHostRepository) Get(ID string) (entity.Host, error) {
-	h.lock.RLock()
-	defer h.lock.RUnlock()
 	if val, ok := h.hosts[ID]; ok {
 		return *val, nil
 	}
@@ -68,8 +68,6 @@ func (h *memoryHostRepository) Get(ID string) (entity.Host, error) {
 
 // FindByHardwareAddr implements repository.HostRepository interface
 func (h *memoryHostRepository) FindByHardwareAddr(hardwareAddr string) (entity.Host, error) {
-	h.lock.RLock()
-	defer h.lock.RUnlock()
 	if val, ok := h.hardwareAddrIndex[hardwareAddr]; ok {
 		return *val, nil
 	}
@@ -79,8 +77,9 @@ func (h *memoryHostRepository) FindByHardwareAddr(hardwareAddr string) (entity.H
 
 // Update implements repository.HostRepository interface
 func (h *memoryHostRepository) Update(host entity.Host) error {
-	h.lock.Lock()
-	defer h.lock.Unlock()
+	if h.session.IsReadOnly() {
+		return &errors.Error{Code: errors.ERepositoryReadOnly, Msg: "read-only mode"}
+	}
 	e := host
 	if e.ID == "" {
 		return &errors.Error{Code: errors.ERepositoryEmptyKey,
@@ -111,8 +110,9 @@ func (h *memoryHostRepository) Update(host entity.Host) error {
 
 // Delete implements repository.HostRepository interface
 func (h *memoryHostRepository) Delete(host entity.Host) error {
-	h.lock.Lock()
-	defer h.lock.Unlock()
+	if h.session.IsReadOnly() {
+		return &errors.Error{Code: errors.ERepositoryReadOnly, Msg: "read-only mode"}
+	}
 	e := host
 	if e.ID == "" {
 		return &errors.Error{Code: errors.ERepositoryEmptyKey,

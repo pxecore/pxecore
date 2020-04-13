@@ -2,11 +2,11 @@ package entity
 
 // Host entity
 type Host struct {
-	ID            string
-	HardwareAddr  []string
-	Group         string
-	TrapMode      bool
-	TrapTriggered bool
-	vars          map[string]string
-	template      string
+	ID                string
+	HardwareAddr      []string
+	TrapMode          bool
+	TrapTriggered     bool
+	Vars              map[string]string
+	GroupID           string
+	DefaultTemplateID string
 }

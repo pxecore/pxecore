@@ -126,7 +126,7 @@ func NewRepository(config map[string]interface{}) (Repository, error) {
 				return newMemoryRepository(config)
 			}
 		}
-		return nil, errors.New("invalid type in repository type")
+		return nil, errors.New("invalid type in repository driver")
 	}
-	return nil, errors.New("missing repository type")
+	return nil, errors.New("missing repository driver")
 }

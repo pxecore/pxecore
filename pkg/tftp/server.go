@@ -55,8 +55,9 @@ type Server struct {
 }
 
 // StartInBackground starts the TFTP server in a different goroutine.
-func (s *Server) StartInBackground(config ServerConfig) {
+func (s *Server) StartInBackground(config ServerConfig) error {
 	go s.Start(config)
+	return nil
 }
 
 // Start initiates the TFTP server blocking the current goroutine.

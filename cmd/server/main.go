@@ -2,8 +2,11 @@ package main
 
 import (
 	"errors"
+	"github.com/pxecore/pxecore/pkg/controller"
+	"github.com/pxecore/pxecore/pkg/http"
 	"github.com/pxecore/pxecore/pkg/ipxe"
 	"github.com/pxecore/pxecore/pkg/ipxe/script"
+	repo "github.com/pxecore/pxecore/pkg/repository"
 	"github.com/pxecore/pxecore/pkg/tftp"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
@@ -13,7 +16,8 @@ import (
 	"time"
 )
 
-var tftpServer = new(tftp.Server)
+var tftpServer *tftp.Server
+var repository repo.Repository
 
 func main() {
 	log.Info("Starting PXECORE Server...")
@@ -31,6 +35,22 @@ func main() {
 	if err := loadTFTPServer(); err != nil {
 		log.WithError(err).Fatal("Error loading tftp server.")
 	}
+
+	r, err := repo.NewRepository(viper.GetStringMap("db"))
+	if err != nil {
+		log.WithError(err).Fatal("Error loading repository server.")
+	}
+	repository = r
+
+	s := http.Server{Controllers: []http.Controller{
+		controller.Template{Repository: repository},
+	}}
+
+	c, err := http.NewConfig(viper.GetStringMap("http"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Fatal(s.Start(c))
 }
 
 // loadDefaultConfig loads default config.
@@ -38,6 +58,14 @@ func loadDefaultConfig() {
 	viper.SetDefault("tftp", map[string]interface{}{
 		"address": ":69",
 		"timeout": 5 * time.Second,
+	})
+	viper.SetDefault("http", map[string]interface{}{
+		"address":       ":80",
+		"read-timeout":  10,
+		"write-timeout": 10,
+	})
+	viper.SetDefault("db", map[string]interface{}{
+		"driver": "memory",
 	})
 }
 
@@ -120,7 +148,7 @@ func overrideIPXEFiles() error {
 // loadTFTPServer starts the TFTP Server.
 func loadTFTPServer() error {
 	tftpServer = new(tftp.Server)
-	return tftpServer.Start(tftp.ServerConfig{
+	return tftpServer.StartInBackground(tftp.ServerConfig{
 		Address:    viper.GetString("tftp.address"),
 		Timeout:    viper.GetDuration("tftp.timeout"),
 		IPXEScript: loadIPXEScript(),

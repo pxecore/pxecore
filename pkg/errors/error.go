@@ -12,6 +12,8 @@ const (
 	EUnknown string = "EUnknown"
 	// EInvalidType code for invalid type in type conversion.
 	EInvalidType string = "EInvalidType"
+	// EAlreadyRunning code for already running resources.
+	EAlreadyRunning string = "EAlreadyRunning"
 	// ERepositoryKeyExist code when a key exists where it shouldn't.
 	ERepositoryKeyExist string = "ERepositoryKeyExist"
 	// ERepositoryKeyNotFound code when a key was not found.
@@ -41,6 +43,15 @@ func (e *Error) Error() string {
 		s.WriteString(fmt.Sprintf(" <%s>", e.Err.Error()))
 	}
 	return s.String()
+}
+
+// Code returns the code of the error or EUnknown if undefined.
+func Code(err error) string {
+	val, ok := err.(*Error)
+	if !ok {
+		return EUnknown
+	}
+	return val.Code
 }
 
 // Is checks if an error is of a certain type.

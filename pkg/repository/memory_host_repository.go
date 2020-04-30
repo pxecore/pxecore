@@ -50,6 +50,29 @@ func (h *memoryHostRepository) Create(host entity.Host) error {
 				Msg: fmt.Sprintf("entity.Host HardwareAddr %v already exists ", e)}
 		}
 	}
+
+	var err error
+	if e.TemplateID != "" {
+		if _, err = h.session.Template().Get(e.TemplateID); err != nil {
+			return &errors.Error{Code: errors.ERepositoryKeyNotFound,
+				Msg: fmt.Sprintf("entity.Host TemplateID %v not found.", e)}
+		}
+	}
+	if e.GroupID != "" {
+		g, err := h.session.Group().Get(e.GroupID)
+		if g, err = h.session.Group().Get(e.GroupID); err != nil {
+			return &errors.Error{Code: errors.ERepositoryKeyNotFound,
+				Msg: fmt.Sprintf("entity.Host GroupID %v not found.", e),
+				Err: err}
+		}
+		g.AddHost(e.ID)
+		if err := h.session.Group().Update(g); err != nil {
+			return &errors.Error{Code: errors.EUnknown,
+				Msg: fmt.Sprintf("entity.Host GroupID %v can't be updated.", e),
+				Err: err}
+		}
+	}
+
 	h.hosts[e.ID] = &e
 	for _, m := range e.HardwareAddr {
 		h.hardwareAddrIndex[m] = &e
@@ -98,6 +121,39 @@ func (h *memoryHostRepository) Update(host entity.Host) error {
 			}
 		}
 	}
+	if e.TemplateID != "" {
+		if _, err := h.session.Template().Get(e.TemplateID); err != nil {
+			return &errors.Error{Code: errors.ERepositoryKeyNotFound,
+				Msg: fmt.Sprintf("entity.Host TemplateID %v not found.", e)}
+		}
+	}
+
+	if e.GroupID != "" {
+		g, err := h.session.Group().Get(e.GroupID)
+		if err != nil {
+			return &errors.Error{Code: errors.ERepositoryKeyNotFound,
+				Msg: fmt.Sprintf("entity.Host GroupID %v not found.", e),
+				Err: err}
+		}
+		g.AddHost(e.ID)
+		if err := h.session.Group().Update(g); err != nil {
+			return &errors.Error{Code: errors.EUnknown,
+				Msg: fmt.Sprintf("entity.Host GroupID %v can't be updated.", e),
+				Err: err}
+		}
+	}
+
+	if oe.GroupID != "" {
+		g, err := h.session.Group().Get(oe.GroupID)
+		if err == nil {
+			g.RemoveHost(e.ID)
+			if err := h.session.Group().Update(g); err != nil {
+				return &errors.Error{Code: errors.EUnknown,
+					Msg: fmt.Sprintf("entity.Host GroupID %v can't be removed from the leaving group.", e),
+					Err: err}
+			}
+		}
+	}
 	h.hosts[e.ID] = &e
 	for _, val := range oe.HardwareAddr {
 		delete(h.hardwareAddrIndex, val)
@@ -131,6 +187,16 @@ func (h *memoryHostRepository) Delete(host entity.Host) error {
 	}
 	for _, val := range oe.HardwareAddr {
 		delete(h.hardwareAddrIndex, val)
+	}
+	if oe.GroupID != "" {
+		if g, err := h.session.Group().Get(oe.GroupID); err == nil {
+			g.RemoveHost(e.ID)
+			if err := h.session.Group().Update(g); err != nil {
+				return &errors.Error{Code: errors.EUnknown,
+					Msg: fmt.Sprintf("entity.Host GroupID %v can't be removed from the leaving group.", e),
+					Err: err}
+			}
+		}
 	}
 	delete(h.hosts, oe.ID)
 	return nil

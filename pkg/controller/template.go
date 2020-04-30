@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	idRegex, _ = regexp.Compile("^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$")
+	templateIDRegex, _ = regexp.Compile("^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$")
 )
 
 //~ STRUCT - Server -----------------------------------------------------------
@@ -173,10 +173,10 @@ func (t *TemplateBody) LoadTemplate(e entity.Template) {
 
 // Validate checks if the data hold in the instance follows the desired schema.
 func (t TemplateBody) Validate() error {
-	if !idRegex.MatchString(t.ID) {
+	if !templateIDRegex.MatchString(t.ID) {
 		return &errors.Error{
 			Code: errors.EInvalidType,
-			Msg:  fmt.Sprint("[controller.Template] id should follow pattern: ", idRegex.String()),
+			Msg:  fmt.Sprint("[controller.Template] id should follow pattern: ", templateIDRegex.String()),
 		}
 	}
 	if strings.TrimSpace(t.Template) == "" {

@@ -44,6 +44,8 @@ func main() {
 
 	s := http.Server{Controllers: []http.Controller{
 		controller.Template{Repository: repository},
+		controller.Host{Repository: repository},
+		controller.Group{Repository: repository},
 	}}
 
 	c, err := http.NewConfig(viper.GetStringMap("http"))

@@ -51,8 +51,6 @@ func (t Host) Get(w http.ResponseWriter, r *http.Request) {
 	} else {
 		server.WriteJSON(w, hb.JSON(), http.StatusOK)
 	}
-
-	w.WriteHeader(203)
 }
 
 // Put stores a new host.

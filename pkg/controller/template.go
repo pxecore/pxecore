@@ -29,8 +29,8 @@ type Template struct {
 func (t Template) Register(r *mux.Router, config server.Config) {
 	r.HandleFunc("/template/{id:[a-zA-Z0-9]+}", t.Get).Methods(http.MethodGet)
 	r.HandleFunc("/template/{id:[a-zA-Z0-9]+}/template", t.GetTemplate).Methods(http.MethodGet)
-	r.HandleFunc("/template/{id:[a-zA-Z0-9]+}/template", t.PostFile).Methods(http.MethodPost)
-	r.HandleFunc("/template", t.Post).Methods(http.MethodPost)
+	r.HandleFunc("/template/{id:[a-zA-Z0-9]+}/template", t.PostFile).Methods(http.MethodPut)
+	r.HandleFunc("/template", t.Post).Methods(http.MethodPut)
 }
 
 // Get returns a template by ID.

@@ -24,13 +24,13 @@ func TestTemplate(t *testing.T) {
 		wantStatusCode int
 		wantResponse   string
 	}{
-		{"OK_ADD_TEMPLATE", http.MethodPost, "/template",
+		{"OK_ADD_TEMPLATE", http.MethodPut, "/template",
 			"application/json", "{\"id\":\"id1\",\"template\":\"template1\"}",
 			http.StatusOK, ""},
-		{"KO_MISSING_PARAMETER", http.MethodPost, "/template",
+		{"KO_MISSING_PARAMETER", http.MethodPut, "/template",
 			"application/json", "{\"id\":\"id1\"}",
 			http.StatusBadRequest, ""},
-		{"OK_UPDATE_TEMPLATE", http.MethodPost, "/template/id1/template",
+		{"OK_UPDATE_TEMPLATE", http.MethodPut, "/template/id1/template",
 			"application/text", "template2\ntemplate2",
 			http.StatusOK, ""},
 		{"OK_GET_TEMPLATE", http.MethodGet, "/template/id1",

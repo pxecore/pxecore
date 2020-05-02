@@ -10,10 +10,10 @@ import (
 	"testing"
 )
 
-func TestTemplate(t *testing.T) {
+func TestGroup(t *testing.T) {
 	r, _ := repository.NewRepository(map[string]interface{}{"driver": "memory"})
 	ro := mux.NewRouter()
-	ss := Template{Repository: r}
+	ss := Group{Repository: r}
 	ss.Register(ro, server.Config{})
 	tests := []struct {
 		name           string
@@ -24,21 +24,6 @@ func TestTemplate(t *testing.T) {
 		wantStatusCode int
 		wantResponse   string
 	}{
-		{"OK_ADD_TEMPLATE", http.MethodPut, "/template",
-			"application/json", "{\"id\":\"id1\",\"template\":\"template1\"}",
-			http.StatusOK, ""},
-		{"KO_MISSING_PARAMETER", http.MethodPut, "/template",
-			"application/json", "{\"id\":\"id1\"}",
-			http.StatusBadRequest, ""},
-		{"OK_UPDATE_TEMPLATE", http.MethodPut, "/template/id1/template",
-			"application/text", "template2\ntemplate2",
-			http.StatusOK, ""},
-		{"OK_GET_TEMPLATE", http.MethodGet, "/template/id1",
-			"application/json", "",
-			http.StatusOK, "{\"id\":\"id1\",\"template\":\"template2\\ntemplate2\"}"},
-		{"OK_GET_TEMPLATE_TEXT", http.MethodGet, "/template/id1/template",
-			"application/text", "",
-			http.StatusOK, "template2\ntemplate2"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

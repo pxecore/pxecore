@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	idRegex, _ = regexp.Compile("^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$")
+	templateIDRegex, _ = regexp.Compile("^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$")
 )
 
 //~ STRUCT - Server -----------------------------------------------------------
@@ -29,8 +29,8 @@ type Template struct {
 func (t Template) Register(r *mux.Router, config server.Config) {
 	r.HandleFunc("/template/{id:[a-zA-Z0-9]+}", t.Get).Methods(http.MethodGet)
 	r.HandleFunc("/template/{id:[a-zA-Z0-9]+}/template", t.GetTemplate).Methods(http.MethodGet)
-	r.HandleFunc("/template/{id:[a-zA-Z0-9]+}/template", t.PostFile).Methods(http.MethodPost)
-	r.HandleFunc("/template", t.Post).Methods(http.MethodPost)
+	r.HandleFunc("/template/{id:[a-zA-Z0-9]+}/template", t.PostFile).Methods(http.MethodPut)
+	r.HandleFunc("/template", t.Post).Methods(http.MethodPut)
 }
 
 // Get returns a template by ID.
@@ -52,7 +52,7 @@ func (t Template) Get(w http.ResponseWriter, r *http.Request) {
 		return nil
 	}); err != nil {
 		if errors.Is(err, errors.ERepositoryKeyNotFound) {
-			server.WriteJSON(w, errors.MarshalJSON(err), http.StatusNoContent)
+			server.WriteJSON(w, errors.MarshalJSON(err), http.StatusNotFound)
 		} else {
 			server.WriteJSON(w, errors.MarshalJSON(err), http.StatusInternalServerError)
 		}
@@ -173,10 +173,10 @@ func (t *TemplateBody) LoadTemplate(e entity.Template) {
 
 // Validate checks if the data hold in the instance follows the desired schema.
 func (t TemplateBody) Validate() error {
-	if !idRegex.MatchString(t.ID) {
+	if !templateIDRegex.MatchString(t.ID) {
 		return &errors.Error{
 			Code: errors.EInvalidType,
-			Msg:  fmt.Sprint("[controller.Template] id should follow pattern: ", idRegex.String()),
+			Msg:  fmt.Sprint("[controller.Template] id should follow pattern: ", templateIDRegex.String()),
 		}
 	}
 	if strings.TrimSpace(t.Template) == "" {

@@ -1,13 +1,14 @@
 name: Go
 
 on:
-  push:
-    branches: [ "*" ]
+  pull_request:
+    branches:
+      "master"
 
 jobs:
 
   build:
-    name: Build
+    name: Test
     runs-on: ubuntu-latest
     steps:
 
@@ -22,9 +23,6 @@ jobs:
 
     - name: Get dependencies
       run: make dep
-
-    - name: Build
-      run: make build
 
     - name: Test
       run: make all_tests

@@ -114,8 +114,8 @@ func runIndividualGroupCRUD(t *testing.T, m Repository) {
 			Vars:              map[string]string{"foo": "bar"},
 			HostsIDs:          []string{"host"},
 			GroupIDs:          []string{"GroupID"},
-			ParentID:          "parent",
-			DefaultTemplateID: "defaultTemplate",
+			ParentID:          "",
+			TemplateID: "defaultTemplate",
 		})
 	}); err != nil {
 		t.Fatal("runIndividualHostCRUD - error creating ", err)
@@ -145,11 +145,11 @@ func runIndividualGroupCRUD(t *testing.T, m Repository) {
 			Vars:              map[string]string{"foo2": "bar2"},
 			HostsIDs:          []string{"host2"},
 			GroupIDs:          []string{"GroupID2"},
-			ParentID:          "parent",
-			DefaultTemplateID: "defaultTemplate",
+			ParentID:          "",
+			TemplateID: "defaultTemplate",
 		})
 	}); err != nil {
-		t.Fatal("runIndividualHostCRUD - error creating ", err)
+		t.Error("runIndividualHostCRUD - error creating ", err)
 	}
 	if err := m.Read(func(s Session) error {
 		h, err := s.Group().Get("11")
@@ -157,11 +157,11 @@ func runIndividualGroupCRUD(t *testing.T, m Repository) {
 			return err
 		}
 		if h.GroupIDs[0] != "GroupID2" {
-			t.Fatal("Invalid stored data - ", h)
+			t.Error("Invalid stored data - ", h)
 		}
 		return nil
 	}); err != nil {
-		t.Fatal("runIndividualHostCRUD - error creating ", err)
+		t.Error("runIndividualHostCRUD - error creating ", err)
 	}
 }
 func runIndividualTemplateCRUD(t *testing.T, m Repository) {

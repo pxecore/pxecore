@@ -52,7 +52,7 @@ func (t Template) Get(w http.ResponseWriter, r *http.Request) {
 		return nil
 	}); err != nil {
 		if errors.Is(err, errors.ERepositoryKeyNotFound) {
-			server.WriteJSON(w, errors.MarshalJSON(err), http.StatusNoContent)
+			server.WriteJSON(w, errors.MarshalJSON(err), http.StatusNotFound)
 		} else {
 			server.WriteJSON(w, errors.MarshalJSON(err), http.StatusInternalServerError)
 		}

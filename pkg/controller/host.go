@@ -44,9 +44,9 @@ func (t Host) Get(w http.ResponseWriter, r *http.Request) {
 		return nil
 	}); err != nil {
 		if errors.Is(err, errors.ERepositoryKeyNotFound) {
-			server.WriteText(w, err.Error(), http.StatusNotFound)
+			server.WriteJSON(w, errors.MarshalJSON(err), http.StatusNotFound)
 		} else {
-			server.WriteText(w, err.Error(), http.StatusInternalServerError)
+			server.WriteJSON(w, errors.MarshalJSON(err), http.StatusInternalServerError)
 		}
 	} else {
 		server.WriteJSON(w, hb.JSON(), http.StatusOK)
@@ -80,7 +80,7 @@ func (t Host) Put(w http.ResponseWriter, r *http.Request) {
 			server.WriteJSON(w, errors.MarshalJSON(err), http.StatusInternalServerError)
 		}
 	}
-	server.WriteJSON(w, tp.JSON(), http.StatusCreated)
+	server.WriteJSON(w, []byte{}, http.StatusCreated)
 }
 
 //~ STRUCT - JSON -----------------------------------------------------------

@@ -1,7 +1,4 @@
-on:
-  push:
-    branches:
-      "ci-release"
+on: release
 name: Build
 jobs:
   test:

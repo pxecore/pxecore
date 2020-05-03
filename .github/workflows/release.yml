@@ -18,4 +18,4 @@ jobs:
       - name: Get dependencies
         run: make dep
       - name: Release
-        run: cat $GITHUB_EVENT_PATH
+        run:  cat $GITHUB_EVENT_PATH

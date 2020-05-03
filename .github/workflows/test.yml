@@ -1,5 +1,3 @@
-name: Test
-
 on:
   push:
     branches:
@@ -7,9 +5,9 @@ on:
   pull_request:
     branches:
       "master"
-
+name: Test
 jobs:
-  build:
+  test:
     name: Test
     runs-on: ubuntu-latest
     steps:

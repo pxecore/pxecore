@@ -1,6 +1,3 @@
-# Makefile for car-pooling-challenge
-# Licence MIT
-
 dep: ## Get the dependencies
 	@go get -v -d ./...
 	@go get -u golang.org/x/lint/golint
@@ -22,3 +19,7 @@ build: ## Build the binary file
 	GOOS=darwin GOARCH=amd64 go build -o ./build/pxecore.darwin.amd64.server ./cmd/server/main.go
 	GOOS=linux GOARCH=arm64 go build -o ./build/pxecore.linux.amd64.server ./cmd/server/main.go
 	GOOS=linux GOARCH=arm go build -o ./build/pxecore.linux.arm.server ./cmd/server/main.go
+
+github_release:
+	echo '$(EVENT_DATA)'
+	pwd

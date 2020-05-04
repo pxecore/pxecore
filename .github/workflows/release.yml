@@ -15,4 +15,6 @@ jobs:
       - name: Get dependencies
         run: make dep
       - name: Release
-        run:  cat $GITHUB_EVENT_PATH
+        run: |
+          echo ${{ github.event.release.upload_url }}
+          echo ${{ github.event.release.tag_name }}

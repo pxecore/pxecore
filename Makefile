@@ -15,11 +15,30 @@ coverage: ## Generate global code coverage report
 
 all_tests: lint test coverage ## All Tests
 
-build: ## Build the binary file
-	GOOS=darwin GOARCH=amd64 go build -o ./build/pxecore.darwin.amd64.server ./cmd/server/main.go
-	GOOS=linux GOARCH=arm64 go build -o ./build/pxecore.linux.amd64.server ./cmd/server/main.go
-	GOOS=linux GOARCH=arm go build -o ./build/pxecore.linux.arm.server ./cmd/server/main.go
+.APP_NAME=pxecore
+.BUILD_EXTENSION=$(if $(findstring windows, $(GOOS)),.exe,)
+package: ## Packages aplication. Extra Vars: GOOS,GOARCH
+	go build -o ./build/$(.APP_NAME)$(.BUILD_EXTENSION)
 
-github_release:
-	echo '$(EVENT_DATA)'
-	pwd
+.GOOS=$(if $(GOOS),$(GOOS),linux)
+.GOARCH=$(if $(GOARCH),$(GOARCH),amd64)
+.RELEASE_NAME=$(if $(GITHUB_TAG_NAME),$(GITHUB_TAG_NAME),v.0.0.0)
+.FLAVOUR_EXTENSION=$(if $(findstring windows, $(.GOOS)),.exe,)
+.FLAVOUR_FILENAME=$(.APP_NAME)_$(.RELEASE_NAME)_$(.GOOS)_$(.GOARCH)$(.FLAVOUR_EXTENSION)
+package_flavour: ## Packages aplication. Extra Vars: GOOS,GOARCH
+	@echo Packaging Application...
+	GOOS=$(.GOOS) GOARCH=$(.GOARCH) go build -o ./build/$(.FLAVOUR_FILENAME)
+	@echo Packaging Compleate!
+
+.SUBST:={?name,label}
+.RELEASE_UPLOAD_URL=$(subst $(.SUBST),,$(GITHUB_UPLOAD_URL))
+.GITHUB_TOKEN=$(GITHUB_TOKEN)
+github_release: package_flavour
+	@echo Uploading Package...
+	@tar cvfz "./build/$(.FLAVOUR_FILENAME).tar.gz" "./build/$(.FLAVOUR_FILENAME)"
+	@curl \
+      -X POST \
+      --data-binary @./build/$(.FLAVOUR_FILENAME).tar.gz \
+      -H 'Content-Type: application/gzip' \
+      -H "Authorization: Bearer $(.GITHUB_TOKEN)" \
+      "$(.RELEASE_UPLOAD_URL)?name=$(.FLAVOUR_FILENAME).tar.gz"

@@ -37,7 +37,7 @@ type ServerConfig struct {
 	Timeout time.Duration
 	// IPXEScript is used to retrieve the IPXE particular to a host mac address.
 	// If SingleModeFile is present it will be ignored and if not present the DefaultIPXEScript will be used.
-	IPXEScript *IPXEScript
+	IPXEScript IPXEScript
 }
 
 // IPXEScript implements the IPXE static lookup procedure.
@@ -51,7 +51,7 @@ type Server struct {
 	config            *ServerConfig
 	server            *tftp.Server
 	defaultIPXEScript []byte
-	ipxeScript        *IPXEScript
+	ipxeScript        IPXEScript
 }
 
 // StartInBackground starts the TFTP server in a different goroutine.
@@ -99,11 +99,11 @@ func (s *Server) tftpReadHandler(filename string, rf io.ReaderFrom) error {
 		break
 	default:
 		var response []byte
-		if *s.ipxeScript != nil {
+		if s.ipxeScript != nil {
 			fn := strings.ToLower(filename)
 			g := macAddressRegex.FindStringSubmatch(fn)
 			if len(g) > 1 {
-				response = []byte(strings.TrimSpace((*s.ipxeScript).Lookup(g[1])))
+				response = []byte(strings.TrimSpace((s.ipxeScript).Lookup(g[1])))
 			}
 		}
 		if len(response) == 0 {

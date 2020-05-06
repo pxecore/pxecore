@@ -156,6 +156,34 @@ func (mr *MockSessionMockRecorder) Host() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Host", reflect.TypeOf((*MockSession)(nil).Host))
 }
 
+// Template mocks base method
+func (m *MockSession) Template() repository.TemplateRepository {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Template")
+	ret0, _ := ret[0].(repository.TemplateRepository)
+	return ret0
+}
+
+// Template indicates an expected call of Template
+func (mr *MockSessionMockRecorder) Template() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Template", reflect.TypeOf((*MockSession)(nil).Template))
+}
+
+// Group mocks base method
+func (m *MockSession) Group() repository.GroupRepository {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Group")
+	ret0, _ := ret[0].(repository.GroupRepository)
+	return ret0
+}
+
+// Group indicates an expected call of Group
+func (mr *MockSessionMockRecorder) Group() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Group", reflect.TypeOf((*MockSession)(nil).Group))
+}
+
 // MockHostRepository is a mock of HostRepository interface
 type MockHostRepository struct {
 	ctrl     *gomock.Controller
@@ -249,4 +277,164 @@ func (m *MockHostRepository) Delete(host entity.Host) error {
 func (mr *MockHostRepositoryMockRecorder) Delete(host interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockHostRepository)(nil).Delete), host)
+}
+
+// MockGroupRepository is a mock of GroupRepository interface
+type MockGroupRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockGroupRepositoryMockRecorder
+}
+
+// MockGroupRepositoryMockRecorder is the mock recorder for MockGroupRepository
+type MockGroupRepositoryMockRecorder struct {
+	mock *MockGroupRepository
+}
+
+// NewMockGroupRepository creates a new mock instance
+func NewMockGroupRepository(ctrl *gomock.Controller) *MockGroupRepository {
+	mock := &MockGroupRepository{ctrl: ctrl}
+	mock.recorder = &MockGroupRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockGroupRepository) EXPECT() *MockGroupRepositoryMockRecorder {
+	return m.recorder
+}
+
+// Create mocks base method
+func (m *MockGroupRepository) Create(host entity.Group) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", host)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Create indicates an expected call of Create
+func (mr *MockGroupRepositoryMockRecorder) Create(host interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockGroupRepository)(nil).Create), host)
+}
+
+// Get mocks base method
+func (m *MockGroupRepository) Get(ID string) (entity.Group, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Get", ID)
+	ret0, _ := ret[0].(entity.Group)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get
+func (mr *MockGroupRepositoryMockRecorder) Get(ID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockGroupRepository)(nil).Get), ID)
+}
+
+// Update mocks base method
+func (m *MockGroupRepository) Update(host entity.Group) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", host)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update
+func (mr *MockGroupRepositoryMockRecorder) Update(host interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockGroupRepository)(nil).Update), host)
+}
+
+// Delete mocks base method
+func (m *MockGroupRepository) Delete(host entity.Group) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", host)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete
+func (mr *MockGroupRepositoryMockRecorder) Delete(host interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockGroupRepository)(nil).Delete), host)
+}
+
+// MockTemplateRepository is a mock of TemplateRepository interface
+type MockTemplateRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockTemplateRepositoryMockRecorder
+}
+
+// MockTemplateRepositoryMockRecorder is the mock recorder for MockTemplateRepository
+type MockTemplateRepositoryMockRecorder struct {
+	mock *MockTemplateRepository
+}
+
+// NewMockTemplateRepository creates a new mock instance
+func NewMockTemplateRepository(ctrl *gomock.Controller) *MockTemplateRepository {
+	mock := &MockTemplateRepository{ctrl: ctrl}
+	mock.recorder = &MockTemplateRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockTemplateRepository) EXPECT() *MockTemplateRepositoryMockRecorder {
+	return m.recorder
+}
+
+// Create mocks base method
+func (m *MockTemplateRepository) Create(host entity.Template) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", host)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Create indicates an expected call of Create
+func (mr *MockTemplateRepositoryMockRecorder) Create(host interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockTemplateRepository)(nil).Create), host)
+}
+
+// Get mocks base method
+func (m *MockTemplateRepository) Get(ID string) (entity.Template, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Get", ID)
+	ret0, _ := ret[0].(entity.Template)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get
+func (mr *MockTemplateRepositoryMockRecorder) Get(ID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockTemplateRepository)(nil).Get), ID)
+}
+
+// Update mocks base method
+func (m *MockTemplateRepository) Update(host entity.Template) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", host)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update
+func (mr *MockTemplateRepositoryMockRecorder) Update(host interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockTemplateRepository)(nil).Update), host)
+}
+
+// Delete mocks base method
+func (m *MockTemplateRepository) Delete(host entity.Template) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", host)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete
+func (mr *MockTemplateRepositoryMockRecorder) Delete(host interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockTemplateRepository)(nil).Delete), host)
 }

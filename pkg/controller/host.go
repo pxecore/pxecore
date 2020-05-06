@@ -8,6 +8,7 @@ import (
 	"github.com/pxecore/pxecore/pkg/errors"
 	server "github.com/pxecore/pxecore/pkg/http"
 	"github.com/pxecore/pxecore/pkg/repository"
+	"github.com/pxecore/pxecore/pkg/template"
 	"net/http"
 	"regexp"
 )
@@ -27,6 +28,8 @@ type Host struct {
 func (t Host) Register(r *mux.Router, config server.Config) {
 	r.HandleFunc("/host/{id:[a-zA-Z0-9]+}", t.Get).Methods(http.MethodGet)
 	r.HandleFunc("/host", t.Put).Methods(http.MethodPut)
+	r.HandleFunc("/host/{id:[a-zA-Z0-9]+}/template", t.GetTemplate).Methods(http.MethodGet)
+	r.HandleFunc("/host/{id:[a-zA-Z0-9]+}/template/{template-id:[a-zA-Z0-9]+}", t.GetTemplate).Methods(http.MethodGet)
 }
 
 // Get returns a template by ID.
@@ -81,6 +84,18 @@ func (t Host) Put(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	server.WriteJSON(w, []byte{}, http.StatusCreated)
+}
+
+// GetTemplate compiles the default or desired template.
+func (t Host) GetTemplate(w http.ResponseWriter, r *http.Request) {
+	v := mux.Vars(r)
+	id, _ := v["id"]
+	templateID, _ := v["template-id"]
+	w.Header().Set("Content-Type", "application/text; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	if err := template.Compile(w, t.Repository, id, templateID); err != nil {
+		server.WriteText(w, err.Error(), http.StatusCreated)
+	}
 }
 
 //~ STRUCT - JSON -----------------------------------------------------------

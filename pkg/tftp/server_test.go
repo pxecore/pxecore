@@ -61,7 +61,7 @@ func TestServer_tftpReadHandler(t *testing.T) {
 			config:            tt.fields.config,
 			server:            tt.fields.server,
 			defaultIPXEScript: tt.fields.defaultIPXEScript,
-			ipxeScript:        &tt.fields.ipxeScript,
+			ipxeScript:        tt.fields.ipxeScript,
 		}
 		if err := s.tftpReadHandler(tt.args.filename, tt.args.rf); (err != nil) != tt.wantErr {
 			t.Errorf("tftpReadHandler() error = %v, wantErr %v", err, tt.wantErr)

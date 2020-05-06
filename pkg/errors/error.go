@@ -22,6 +22,8 @@ const (
 	ERepositoryEmptyKey string = "ERepositoryEmptyKey"
 	// ERepositoryReadOnly read only mode activated.
 	ERepositoryReadOnly string = "ERepositoryReadOnly"
+	// ETemplateError code for template compilation error.
+	ETemplateError string = "ETemplateError"
 )
 
 // Error data structure

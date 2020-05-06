@@ -5,9 +5,9 @@ import (
 	"github.com/pxecore/pxecore/pkg/controller"
 	"github.com/pxecore/pxecore/pkg/http"
 	"github.com/pxecore/pxecore/pkg/ipxe"
-	"github.com/pxecore/pxecore/pkg/ipxe/script"
 	repo "github.com/pxecore/pxecore/pkg/repository"
 	"github.com/pxecore/pxecore/pkg/tftp"
+	"github.com/pxecore/pxecore/pkg/tftp/script"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -28,19 +28,18 @@ func main() {
 	loadConfigFile()
 	log.WithField("config", viper.AllSettings()).Debug("Config Loaded.")
 
-	if err := overrideIPXEFiles(); err != nil {
-		log.WithError(err).Fatal("Error loading ipxe file.")
-	}
-
-	if err := loadTFTPServer(); err != nil {
-		log.WithError(err).Fatal("Error loading tftp server.")
-	}
-
 	r, err := repo.NewRepository(viper.GetStringMap("db"))
 	if err != nil {
 		log.WithError(err).Fatal("Error loading repository server.")
 	}
 	repository = r
+
+	if err := overrideIPXEFiles(); err != nil {
+		log.WithError(err).Fatal("Error loading ipxe file.")
+	}
+	if err := loadTFTPServer(); err != nil {
+		log.WithError(err).Fatal("Error loading tftp server.")
+	}
 
 	s := http.Server{Controllers: []http.Controller{
 		controller.Template{Repository: repository},
@@ -158,7 +157,7 @@ func loadTFTPServer() error {
 }
 
 // loadIPXEScript checks the configuration and load the wanted IPXE resolver.
-func loadIPXEScript() *tftp.IPXEScript {
+func loadIPXEScript() tftp.IPXEScript {
 	var i tftp.IPXEScript
 	var err error
 	if smf := viper.GetString("single"); smf != "" {
@@ -166,7 +165,7 @@ func loadIPXEScript() *tftp.IPXEScript {
 		if err != nil {
 			log.WithError(err).Fatal("Error loading single file.")
 		}
-		return &i
+		return i
 	}
-	return nil
+	return script.RepositoryIPXEScript{Repository: repository}
 }

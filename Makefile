@@ -16,6 +16,7 @@ coverage: ## Generate global code coverage report
 all_tests: lint test coverage ## All Tests
 
 build_ipxe:
+	apt install build-essential git liblzma-dev unzip wget coreutils isolinux
 	cd ./pkg/ipxe && go run generator.go
 
 .APP_NAME=pxecore

@@ -39,7 +39,7 @@ package_flavour: ## Packages aplication. Extra Vars: GOOS,GOARCH
 .GITHUB_TOKEN=$(GITHUB_TOKEN)
 github_release: package_flavour
 	@echo Uploading Package...
-	@tar cvfz "./build/$(.FLAVOUR_FILENAME).tar.gz" "pxecore"
+	@cd ./build && tar cvfz "./$(.FLAVOUR_FILENAME).tar.gz" "pxecore"
 	@curl \
       -X POST \
       --data-binary @./build/$(.FLAVOUR_FILENAME).tar.gz \

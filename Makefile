@@ -31,7 +31,7 @@ package: ## Packages aplication. Extra Vars: GOOS,GOARCH
 .FLAVOUR_FILENAME=$(.APP_NAME)_$(.RELEASE_NAME)_$(.GOOS)_$(.GOARCH)$(.FLAVOUR_EXTENSION)
 package_flavour: ## Packages aplication. Extra Vars: GOOS,GOARCH
 	@echo Packaging Application...
-	GOOS=$(.GOOS) GOARCH=$(.GOARCH) go build -o ./build/$(.FLAVOUR_FILENAME)
+	GOOS=$(.GOOS) GOARCH=$(.GOARCH) go build -o ./build/pxecore
 	@echo Packaging Compleate!
 
 .SUBST:={?name,label}

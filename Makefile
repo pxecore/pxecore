@@ -15,6 +15,9 @@ coverage: ## Generate global code coverage report
 
 all_tests: lint test coverage ## All Tests
 
+build_ipxe:
+	cd ./pkg/ipxe && go run generator.go
+
 .APP_NAME=pxecore
 .BUILD_EXTENSION=$(if $(findstring windows, $(GOOS)),.exe,)
 package: ## Packages aplication. Extra Vars: GOOS,GOARCH
@@ -35,7 +38,7 @@ package_flavour: ## Packages aplication. Extra Vars: GOOS,GOARCH
 .GITHUB_TOKEN=$(GITHUB_TOKEN)
 github_release: package_flavour
 	@echo Uploading Package...
-	@tar cvfz "./build/$(.FLAVOUR_FILENAME).tar.gz" "./build/$(.FLAVOUR_FILENAME)"
+	@tar cvfz "./build/$(.FLAVOUR_FILENAME).tar.gz" "pxecore"
 	@curl \
       -X POST \
       --data-binary @./build/$(.FLAVOUR_FILENAME).tar.gz \

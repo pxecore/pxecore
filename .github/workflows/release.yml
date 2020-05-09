@@ -1,8 +1,8 @@
 on: release
-name: Build
+name: Release
 jobs:
-  test:
-    name: Build
+  release:
+    name: Release
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go 1.x

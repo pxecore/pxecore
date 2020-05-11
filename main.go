@@ -4,10 +4,9 @@ import (
 	"errors"
 	"github.com/pxecore/pxecore/pkg/controller"
 	"github.com/pxecore/pxecore/pkg/http"
-	"github.com/pxecore/pxecore/pkg/ipxe"
 	repo "github.com/pxecore/pxecore/pkg/repository"
 	"github.com/pxecore/pxecore/pkg/tftp"
-	"github.com/pxecore/pxecore/pkg/tftp/script"
+	"github.com/pxecore/pxecore/pkg/tftp/locator"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -24,8 +23,8 @@ func main() {
 
 	loadDefaultConfig()
 	loadCoreConfig()
-	loadLogging()
 	loadConfigFile()
+	loadLogging()
 	log.WithField("config", viper.AllSettings()).Debug("Config Loaded.")
 
 	r, err := repo.NewRepository(viper.GetStringMap("db"))
@@ -34,11 +33,16 @@ func main() {
 	}
 	repository = r
 
-	if err := overrideIPXEFiles(); err != nil {
-		log.WithError(err).Fatal("Error loading ipxe file.")
-	}
-	if err := loadTFTPServer(); err != nil {
-		log.WithError(err).Fatal("Error loading tftp server.")
+	tftpServer = new(tftp.Server)
+	if err := tftpServer.StartInBackground(tftp.ServerConfig{
+		Address: viper.GetString("tftp.address"),
+		Timeout: viper.GetDuration("tftp.timeout"),
+		FileLocators: []tftp.FileLocator{
+			locator.NewIPXEFirmware(),
+			locator.NewRepositoryIPXEScript(repository),
+		},
+	}); err != nil {
+		log.Fatal(err)
 	}
 
 	s := http.Server{Controllers: []http.Controller{
@@ -46,7 +50,6 @@ func main() {
 		controller.Host{Repository: repository},
 		controller.Group{Repository: repository},
 	}}
-
 	c, err := http.NewConfig(viper.GetStringMap("http"))
 	if err != nil {
 		log.Fatal(err)
@@ -79,14 +82,10 @@ func loadCoreConfig() {
 	viper.BindEnv("config")
 	pflag.Bool("debug", false, "Verbose Output.")
 	viper.BindEnv("debug")
-	pflag.StringP("logfile", "l", "", "Logfile Path.")
+	pflag.StringP("logfile", "l", "", "Log file Path.")
 	viper.BindEnv("logfile")
-	pflag.StringP("single", "s", "", "Single Mode File Path.")
-	viper.BindEnv("single")
-	pflag.String("ipxe-bios", "", "Single Mode File Path.")
-	viper.BindEnv("ipxe-bios")
-	pflag.String("ipxe-uefi", "", "Single Mode File Path.")
-	viper.BindEnv("ipxe-uefi")
+	pflag.StringP("basedir", "b", "", "Static file directory.")
+	viper.BindEnv("basedir")
 	pflag.Parse()
 	if err := viper.BindPFlags(pflag.CommandLine); err != nil {
 		log.Warn("Error reading flags: ", err)
@@ -129,43 +128,4 @@ func loadConfigFile() {
 			log.Fatal("Error loading viper config", err)
 		}
 	}
-}
-
-// overrideIPXEFiles replaces the memory loaded IPXE File with the one provided.
-func overrideIPXEFiles() error {
-	if path := viper.GetString("ipxe-bios"); path != "" {
-		if err := ipxe.LoadIPXEBiosFile(path); err != nil {
-			return err
-		}
-	}
-	if path := viper.GetString("ipxe-uefi"); path != "" {
-		if err := ipxe.LoadIPXEUEFIFile(path); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// loadTFTPServer starts the TFTP Server.
-func loadTFTPServer() error {
-	tftpServer = new(tftp.Server)
-	return tftpServer.StartInBackground(tftp.ServerConfig{
-		Address:    viper.GetString("tftp.address"),
-		Timeout:    viper.GetDuration("tftp.timeout"),
-		IPXEScript: loadIPXEScript(),
-	})
-}
-
-// loadIPXEScript checks the configuration and load the wanted IPXE resolver.
-func loadIPXEScript() tftp.IPXEScript {
-	var i tftp.IPXEScript
-	var err error
-	if smf := viper.GetString("single"); smf != "" {
-		i, err = script.NewSingleIPXEScriptFromFile(smf)
-		if err != nil {
-			log.WithError(err).Fatal("Error loading single file.")
-		}
-		return i
-	}
-	return script.RepositoryIPXEScript{Repository: repository}
 }

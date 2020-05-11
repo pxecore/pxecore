@@ -12,6 +12,8 @@ const (
 	EUnknown string = "EUnknown"
 	// EInvalidType code for invalid type in type conversion.
 	EInvalidType string = "EInvalidType"
+	// ENotFound code for a not found resource.
+	ENotFound string = "ENotFound"
 	// EAlreadyRunning code for already running resources.
 	EAlreadyRunning string = "EAlreadyRunning"
 	// ERepositoryKeyExist code when a key exists where it shouldn't.

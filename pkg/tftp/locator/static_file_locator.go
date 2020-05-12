@@ -8,15 +8,13 @@ import (
 	"strings"
 )
 
-const ()
-
-// IPXEFirmware returns the same locator for all mac addresses.
+// StaticFile returns the same locator for all mac addresses.
 type StaticFile struct {
 	BaseDir  string
 	BasePath string
 }
 
-// NewIPXEFirmware instantiates a new SingleIPXEScript with it's read-only attributes
+// NewStaticFile instantiates a new SingleIPXEScript with it's read-only attributes
 func NewStaticFile(baseDir string, basePath string) *StaticFile {
 	return &StaticFile{
 		BaseDir:  baseDir,

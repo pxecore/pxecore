@@ -5,6 +5,7 @@ import (
 	"github.com/pxecore/pxecore/pkg/errors"
 	"github.com/pxecore/pxecore/pkg/repository"
 	"github.com/pxecore/pxecore/pkg/template"
+	"io"
 	"regexp"
 	"strings"
 )
@@ -26,8 +27,8 @@ func NewRepositoryIPXEScript(repository repository.Repository) *RepositoryIPXESc
 }
 
 // Lookup returns the locator for the provided mac address.
-// See github.com/pxecore/pxecore/pkg/tftp/IPXEScript
-func (s RepositoryIPXEScript) Lookup(path string) ([]byte, error) {
+// See github.com/pxecore/pxecore/pkg/tftp/FileLocator
+func (s RepositoryIPXEScript) Lookup(path string) (io.Reader, error) {
 	fn := strings.ToLower(path)
 	var ha string
 	var ok bool
@@ -40,7 +41,7 @@ func (s RepositoryIPXEScript) Lookup(path string) ([]byte, error) {
 	if err := template.CompileWithHardwareAddr(buf, s.repository, ha, ""); err != nil {
 		return nil, err
 	}
-	return buf.Bytes(), nil
+	return buf, nil
 }
 
 // MatchIPXEPath searches the hardware address in the IPXE defined path.

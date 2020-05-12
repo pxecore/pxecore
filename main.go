@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"github.com/pxecore/pxecore/pkg/controller"
 	"github.com/pxecore/pxecore/pkg/http"
 	repo "github.com/pxecore/pxecore/pkg/repository"
@@ -11,6 +12,8 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -19,41 +22,51 @@ var tftpServer *tftp.Server
 var repository repo.Repository
 
 func main() {
-	log.Info("Starting PXECORE Server...")
-
 	loadDefaultConfig()
 	loadCoreConfig()
 	loadConfigFile()
 	loadLogging()
-	log.WithField("config", viper.AllSettings()).Debug("Config Loaded.")
+	basedir, _ := filepath.Abs(viper.GetString("basedir"))
+	log.Info("Config loaded.")
+	log.WithField("config", viper.AllSettings()).Debug("Config payload.")
 
 	r, err := repo.NewRepository(viper.GetStringMap("db"))
 	if err != nil {
-		log.WithError(err).Fatal("Error loading repository server.")
+		log.WithError(err).Fatal("Error loading repository.")
 	}
 	repository = r
 
 	tftpServer = new(tftp.Server)
+	fl := []tftp.FileLocator{
+		locator.NewIPXEFirmware(),
+		locator.NewRepositoryIPXEScript(repository),
+	}
+	if basedir != "" {
+		fl = append(fl, locator.NewStaticFile(basedir, "/"))
+	}
 	if err := tftpServer.StartInBackground(tftp.ServerConfig{
-		Address: viper.GetString("tftp.address"),
-		Timeout: viper.GetDuration("tftp.timeout"),
-		FileLocators: []tftp.FileLocator{
-			locator.NewIPXEFirmware(),
-			locator.NewRepositoryIPXEScript(repository),
-		},
+		Address:      viper.GetString("tftp.address"),
+		Timeout:      viper.GetDuration("tftp.timeout"),
+		LogRequests:  viper.GetBool("verbose"),
+		FileLocators: fl,
 	}); err != nil {
 		log.Fatal(err)
 	}
 
-	s := http.Server{Controllers: []http.Controller{
+	cs := []http.Controller{
 		controller.Template{Repository: repository},
 		controller.Host{Repository: repository},
 		controller.Group{Repository: repository},
-	}}
+	}
+	if basedir != "" {
+		cs = append(cs, controller.Static{BaseDir: basedir})
+	}
 	c, err := http.NewConfig(viper.GetStringMap("http"))
 	if err != nil {
-		log.Fatal(err)
+		log.WithError(err).Fatal("Error loading http server configuration.")
 	}
+	c.LogRequests = viper.GetBool("verbose")
+	s := http.Server{Controllers: cs}
 	log.Fatal(s.Start(c))
 }
 
@@ -80,8 +93,10 @@ func loadCoreConfig() {
 	pflag.ErrHelp = errors.New("pxecore-server: help requested")
 	pflag.StringP("config", "c", "", "Config file path.")
 	viper.BindEnv("config")
-	pflag.Bool("debug", false, "Verbose Output.")
-	viper.BindEnv("debug")
+	pflag.BoolP("verbose", "v", false, "Verbose Output.")
+	viper.BindEnv("verbose")
+	pflag.Bool("json", false, "JSON Output.")
+	viper.BindEnv("json")
 	pflag.StringP("logfile", "l", "", "Log file Path.")
 	viper.BindEnv("logfile")
 	pflag.StringP("basedir", "b", "", "Static file directory.")
@@ -94,8 +109,20 @@ func loadCoreConfig() {
 
 // loadLogging reads from flags and env variables the logging level and file.
 func loadLogging() {
-	if viper.GetBool("debug") {
+	p := func(frame *runtime.Frame) (function string, file string) {
+		f := strings.TrimPrefix(frame.Function, "github.com/pxecore/pxecore/pkg/")
+		f = fmt.Sprint(f, "()")
+		return f, ""
+	}
+	if viper.GetBool("json") {
+		log.SetFormatter(&log.JSONFormatter{CallerPrettyfier: p})
+	} else {
+		log.SetFormatter(&log.TextFormatter{CallerPrettyfier: p})
+	}
+
+	if viper.GetBool("verbose") {
 		log.SetLevel(log.DebugLevel)
+		log.SetReportCaller(true)
 	} else {
 		log.SetLevel(log.InfoLevel)
 	}

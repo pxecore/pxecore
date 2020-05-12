@@ -1,8 +1,10 @@
 package locator
 
 import (
+	"bytes"
 	"github.com/pxecore/pxecore/pkg/errors"
 	"github.com/pxecore/pxecore/pkg/ipxe"
+	"io"
 )
 
 const (
@@ -22,13 +24,13 @@ func NewIPXEFirmware() *IPXEFirmware {
 }
 
 // Lookup returns the locator for the provided path.
-// See gitlab.com/pliego/pxecore/pkg/tftp/IPXEScript
-func (s IPXEFirmware) Lookup(path string) ([]byte, error) {
+// See gitlab.com/pliego/pxecore/pkg/tftp/FileLocator
+func (s IPXEFirmware) Lookup(path string) (io.Reader, error) {
 	switch path {
 	case IPXEBiosFilename:
-		return ipxe.GetIPXEBiosFile(), nil
+		return bytes.NewReader(ipxe.GetIPXEBiosFile()), nil
 	case IPXEEFIFilename:
-		return ipxe.GetIPXEUEFIFile(), nil
+		return bytes.NewReader(ipxe.GetIPXEUEFIFile()), nil
 	}
 	return nil, &errors.Error{Code: errors.ENotFound, Msg: "[tftp.locator] firmware not found."}
 }

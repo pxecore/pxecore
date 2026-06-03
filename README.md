@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://readme-typing-svg.herokuapp.com/?font=JetBrains+Mono&size=15&duration=3000&pause=1500&color=FFFFFF&center=true&vCenter=true&width=600&height=50&lines=Explore+to+understand" alt="Typing SVG" />
+
 
   <img src="https://hips.hearstapps.com/digitalspyuk.cdnds.net/16/23/1465558970-old-internet-gif.gif?crop=1.00xw:0.667xh;0,0.134xh" alt=":3" width="350" style="display: block; margin: 0 auto;" />
 

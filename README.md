@@ -7,7 +7,7 @@
   <br> <br>
 
   <div align="center">
-    <a href="https://github.com/pxecore.gpg"><img src="https://shields.io" alt="PGP" /></a>
+    <a href="https://github.com/pxecore.gpg"><img src="https://img.shields.io/badge/pgp-D6FFC8C171CFAD46-313131?style=flat&labelColor=545454&color=313131" alt="PGP" /></a>
     <a href="https://github.com/pxecore"><img src="https://komarev.com/ghpvc/?username=pxecore&style=flat&color=313131&label=views" alt="views" /></a>
   </div>
 

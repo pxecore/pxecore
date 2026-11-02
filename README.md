@@ -13,9 +13,10 @@
     <a href="https://github.com/pxecore.gpg"><img src="https://img.shields.io/badge/pgp-D6FFC8C171CFAD46-4c566a?style=flat-square&labelColor=2e3440" height="22" alt="PGP" /></a>
     <a href="https://github.com/pxecore"><img src="https://komarev.com/ghpvc/?username=pxecore&style=flat-square&color=4c566a&label=views" height="22" alt="views" /></a>
     <br>
+     <a href="https://tryhackme.com/p/pxecore"><img src="https://img.shields.io/badge/-tryhackme-4c566a?style=flat-square&labelColor=2e3440&logo=tryhackme&logoColor=C9D1D9" height="22" alt="TryHackMe"
     <a href="https://leetcode.com/u/pxecore/"><img src="https://img.shields.io/badge/-leetcode-4c566a?style=flat-square&labelColor=2e3440&logo=leetcode&logoColor=C9D1D9" height="22" alt="LeetCode" /></a>
     <a href="https://www.hackerrank.com/profile/pxecore"><img src="https://img.shields.io/badge/-hackerrank-4c566a?style=flat-square&labelColor=2e3440&logo=hackerrank&logoColor=C9D1D9" height="22" alt="HackerRank" /></a>
-    <a href="https://tryhackme.com/p/pxecore"><img src="https://img.shields.io/badge/-tryhackme-4c566a?style=flat-square&labelColor=2e3440&logo=tryhackme&logoColor=C9D1D9" height="22" alt="TryHackMe" /></a>
+    /></a>
   </p>
 
 </div>

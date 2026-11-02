@@ -4,11 +4,7 @@
 
   <br><br>
 
-  <sub>visit my website</sub><br>
-  <a href="https://pxecore.github.io"><code>pxecore.github.io</code></a>
-
-  <br><br>
-
+  <a href="https://pxecore.github.io"><img src="https://img.shields.io/badge/web-pxecore.github.io-313131?style=flat-square&labelColor=545454&color=313131" alt="Website" /></a>
   <a href="https://github.com/pxecore.gpg"><img src="https://img.shields.io/badge/pgp-D6FFC8C171CFAD46-313131?style=flat-square&labelColor=545454&color=313131" alt="PGP" /></a>
   <a href="https://github.com/pxecore"><img src="https://komarev.com/ghpvc/?username=pxecore&style=flat-square&color=313131&label=views" alt="views" /></a>
 

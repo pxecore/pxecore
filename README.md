@@ -1,12 +1,17 @@
 <div align="center">
 
-  <img src="https://hips.hearstapps.com/digitalspyuk.cdnds.net/16/23/1465558970-old-internet-gif.gif?crop=1.00xw:0.667xh;0,0.134xh" alt=":3" width="350" />
+  <img src="https://hips.hearstapps.com/digitalspyuk.cdnds.net/16/23/1465558970-old-internet-gif.gif?crop=1.00xw:0.667xh;0,0.134xh" alt=":3" width="380" />
 
-  <br><br>
-
-  <a href="https://pxecore.github.io"><img src="https://img.shields.io/badge/web-pxecore.github.io-4c566a?style=flat&labelColor=2e3440" alt="Website" /></a>
   <br>
-  <a href="https://github.com/pxecore.gpg"><img src="https://img.shields.io/badge/pgp-D6FFC8C171CFAD46-4c566a?style=flat&labelColor=2e3440" alt="PGP" /></a>
-  <a href="https://github.com/pxecore"><img src="https://komarev.com/ghpvc/?username=pxecore&style=flat&color=4c566a&label=views" alt="views" /></a>
+
+  <a href="https://pxecore.github.io">
+    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=15&duration=3000&pause=1000&color=8B949E&center=true&vCenter=true&width=380&height=35&lines=pxecore.github.io;new+day+new+game;system+architecture+%26+research" alt="Typing SVG" />
+  </a>
+
+  <br>
+
+  <a href="https://pxecore.github.io"><img src="https://img.shields.io/badge/web-pxecore.github.io-4c566a?style=flat&labelColor=2e3440" height="22" alt="Website" /></a>
+  <a href="https://github.com/pxecore.gpg"><img src="https://img.shields.io/badge/pgp-D6FFC8C171CFAD46-4c566a?style=flat&labelColor=2e3440" height="22" alt="PGP" /></a>
+  <a href="https://github.com/pxecore"><img src="https://komarev.com/ghpvc/?username=pxecore&style=flat&color=4c566a&label=views" height="22" alt="views" /></a>
 
 </div>

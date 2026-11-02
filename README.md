@@ -4,8 +4,8 @@
 
   <br><br>
 
-  <a href="https://pxecore.github.io"><img src="https://img.shields.io/badge/web-pxecore.github.io-3b82f6?style=flat-square&labelColor=27272a" alt="Website" /></a>
-  <a href="https://github.com/pxecore.gpg"><img src="https://img.shields.io/badge/pgp-D6FFC8C171CFAD46-f59e0b?style=flat-square&labelColor=27272a" alt="PGP" /></a>
-  <a href="https://github.com/pxecore"><img src="https://komarev.com/ghpvc/?username=pxecore&style=flat-square&color=ef4444&label=views" alt="views" /></a>
+  <a href="https://pxecore.github.io"><img src="https://img.shields.io/badge/web-pxecore.github.io-58a6ff?style=flat-square&labelColor=30363d" alt="Website" /></a>
+  <a href="https://github.com/pxecore.gpg"><img src="https://img.shields.io/badge/pgp-D6FFC8C171CFAD46-8b5cf6?style=flat-square&labelColor=30363d" alt="PGP" /></a>
+  <a href="https://github.com/pxecore"><img src="https://komarev.com/ghpvc/?username=pxecore&style=flat-square&color=2ea043&label=views" alt="views" /></a>
 
 </div>

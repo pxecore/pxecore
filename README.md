@@ -14,7 +14,7 @@
     <a href="https://pxecore.github.io"><img src="https://img.shields.io/badge/web-pxecore.github.io-4c566a?style=flat-square&labelColor=2e3440" height="22" alt="Website" /></a>
     <a href="https://github.com/pxecore.gpg"><img src="https://img.shields.io/badge/pgp-D6FFC8C171CFAD46-4c566a?style=flat-square&labelColor=2e3440" height="22" alt="PGP" /></a>
     <br>
-    <a href="https://github.com/pxecore"><img src="https://komarev.com/ghpvc/?username=pxecore&style=flat-square&color=4c566a&labelColor=2e3440&label=views" height="22" alt="views" /></a>
+    <a href="https://github.com/pxecore"><img src="https://komarev.com/ghpvc/?username=pxecore&style=flat-square&color=4c566a&label=views" height="22" alt="views" /></a>
   </p>
 
 </div>

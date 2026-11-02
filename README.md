@@ -5,13 +5,13 @@
   <br>
 
   <a href="https://pxecore.github.io">
-    <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=16&duration=3000&pause=1000&color=A3BE8C&center=true&vCenter=true&width=380&height=40&lines=visit+my+website+%3A%3A+pxecore.github.io;new+day+new+game..." alt="Typing SVG" />
+    <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=15&duration=3500&pause=1000&color=C9D1D9&center=true&vCenter=true&width=380&height=38&lines=pxecore.github.io;new+day+new+game..." alt="Typing SVG" />
   </a>
 
   <br>
 
-  <a href="https://github.com/pxecore.gpg"><img src="https://img.shields.io/badge/pgp-D6FFC8C171CFAD46-4c566a?style=flat-square&labelColor=2e3440" height="24" alt="PGP" /></a>
-  &nbsp;
-  <a href="https://github.com/pxecore"><img src="https://komarev.com/ghpvc/?username=pxecore&style=flat-square&color=4c566a&label=views" height="24" alt="views" /></a>
+  <a href="https://pxecore.github.io"><img src="https://img.shields.io/badge/web-pxecore.github.io-4c566a?style=flat-square&labelColor=2e3440" height="22" alt="Website" /></a>
+  <a href="https://github.com/pxecore.gpg"><img src="https://img.shields.io/badge/pgp-D6FFC8C171CFAD46-4c566a?style=flat-square&labelColor=2e3440" height="22" alt="PGP" /></a>
+  <a href="https://github.com/pxecore"><img src="https://komarev.com/ghpvc/?username=pxecore&style=flat-square&color=4c566a&label=views" height="22" alt="views" /></a>
 
 </div>
